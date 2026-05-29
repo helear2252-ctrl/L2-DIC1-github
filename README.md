@@ -4,6 +4,8 @@ A highly customized, premium-tier, and fully interactive personal dashboard buil
 
 🚀 **Live Site:** [https://helear2252-ctrl.github.io/L2-DIC1-github/](https://helear2252-ctrl.github.io/L2-DIC1-github/)
 
+🔗 **Live Demo:** [https://github.com/helear2252-ctrl/L2-DIC1-github.git](https://github.com/helear2252-ctrl/L2-DIC1-github.git)
+
 ---
 
 ## 🌟 Key Features
