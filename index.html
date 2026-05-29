@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="A premium live dashboard showcasing the time, date, and personalization options for JUN WEI. Built with cutting-edge CSS glassmorphism, responsive grid systems, and animated elements.">
+    <title>Hello, I'm JUN WEI | Live Time & Date</title>
+
+    <!-- Google Fonts: Outfit (Brand) & Space Grotesk (Tech/Numbers) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* Modern CSS Custom Properties / Design Tokens */
+        :root {
+            /* Active Theme Colors (Default: Electric Violet) */
+            --theme-primary: #9d4edd;
+            --theme-primary-rgb: 157, 78, 221;
+            --theme-secondary: #ff6b6b;
+            --theme-bg-gradient: radial-gradient(circle at 10% 20%, rgba(15, 12, 30, 1) 0%, rgba(20, 20, 45, 1) 90.1%);
+
+            /* UI Colors */
+            --text-main: #f8f9fa;
+            --text-secondary: #adb5bd;
+            --text-muted: #6c757d;
+            --card-bg: rgba(25, 25, 45, 0.45);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --glow-color: rgba(var(--theme-primary-rgb), 0.25);
+
+            /* Fonts */
+            --font-main: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --font-numbers: 'Space Grotesk', monospace;
+
+            /* Transitions */
+            --transition-smooth: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --transition-fast: all 0.15s ease;
+        }
+
+        /* Ambient Theme Options */
+        [data-theme="cyberpunk"] {
+            --theme-primary: #00f0ff;
+            --theme-primary-rgb: 0, 240, 255;
+            --theme-secondary: #ff007f;
+            --theme-bg-gradient: radial-gradient(circle at 50% 50%, #0d0c1d 0%, #070712 100%);
+        }
+
+        [data-theme="aurora"] {
+            --theme-primary: #00f5d4;
+            --theme-primary-rgb: 0, 245, 212;
+            --theme-secondary: #7b2cbf;
+            --theme-bg-gradient: radial-gradient(circle at 30% 30%, #061614 0%, #020808 100%);
+        }
+
+        [data-theme="amber"] {
+            --theme-primary: #ff9f1c;
+            --theme-primary-rgb: 255, 159, 28;
+            --theme-secondary: #ff4000;
+            --theme-bg-gradient: radial-gradient(circle at 10% 10%, #1e130c 0%, #0b0705 100%);
+        }
+
+        /* Resets */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background: var(--theme-bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            position: relative;
+            padding: 20px;
+            perspective: 1000px;
+        }
+
+        /* Animated Ambient Background Blobs */
+        .ambient-glow {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(var(--theme-primary-rgb), 0.15) 0%, rgba(var(--theme-primary-rgb), 0) 70%);
+            top: -100px;
+            left: -100px;
+            z-index: 0;
+            pointer-events: none;
+            animation: drift 25s infinite alternate ease-in-out;
+        }
+
+        .ambient-glow-secondary {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 107, 107, 0.08) 0%, rgba(255, 107, 107, 0) 70%);
+            bottom: -50px;
+            right: -50px;
+            z-index: 0;
+            pointer-events: none;
+            animation: drift-reverse 20s infinite alternate ease-in-out;
+        }
+
+        @keyframes drift {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                transform: translate(150px, 100px) scale(1.2);
+            }
+        }
+
+        @keyframes drift-reverse {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                transform: translate(-100px, -150px) scale(1.1);
+            }
+        }
+
+        /* Main Container & Glassmorphism Card */
+        main {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 650px;
+            animation: fadeIn 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .dashboard-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--card-border);
+            border-radius: 28px;
+            padding: 40px;
+            box-shadow:
+                0 20px 50px rgba(0, 0, 0, 0.3),
+                0 0 100px rgba(var(--theme-primary-rgb), 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition-smooth);
+        }
+
+        .dashboard-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--theme-primary), var(--theme-secondary));
+        }
+
+        /* Top Bar: Profile & Accent Selectors */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .profile-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        /* Monogram Avatar Component */
+        .avatar-badge {
+            width: 64px;
+            height: 64px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(var(--theme-primary-rgb), 0.2) 0%, rgba(255, 107, 107, 0.15) 100%);
+            border: 1.5px solid rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-numbers);
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-main);
+            text-shadow: 0 0 12px rgba(var(--theme-primary-rgb), 0.5);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition-smooth);
+        }
+
+        .avatar-badge::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: skewX(-25deg);
+            animation: shine 6s infinite ease-in-out;
+        }
+
+        @keyframes shine {
+            0% {
+                left: -100%;
+            }
+
+            20% {
+                left: 150%;
+            }
+
+            100% {
+                left: 150%;
+            }
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .greeting {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--theme-primary);
+            margin-bottom: 2px;
+            transition: var(--transition-smooth);
+        }
+
+        h1 {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--text-main);
+        }
+
+        /* Interactive Themes Customizer */
+        .theme-selector {
+            display: flex;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 6px;
+            border-radius: 100px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .theme-btn {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            position: relative;
+        }
+
+        .theme-btn:hover {
+            transform: scale(1.2);
+        }
+
+        .theme-btn.active {
+            border-color: var(--text-main);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-violet {
+            background: #9d4edd;
+        }
+
+        .btn-cyberpunk {
+            background: #00f0ff;
+        }
+
+        .btn-aurora {
+            background: #00f5d4;
+        }
+
+        .btn-amber {
+            background: #ff9f1c;
+        }
+
+        /* Main Time Display */
+        .time-section {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .clock-container {
+            display: inline-flex;
+            align-items: baseline;
+            justify-content: center;
+            font-family: var(--font-numbers);
+            font-size: 78px;
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: -2px;
+            color: var(--text-main);
+            text-shadow: 0 0 40px var(--glow-color);
+            transition: text-shadow 0.35s ease;
+        }
+
+        .time-part {
+            display: inline-block;
+            transition: transform 0.1s ease;
+        }
+
+        .time-separator {
+            color: var(--theme-primary);
+            opacity: 0.8;
+            margin: 0 4px;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 0.3;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .ampm-badge {
+            font-size: 22px;
+            font-family: var(--font-main);
+            font-weight: 700;
+            color: var(--text-secondary);
+            margin-left: 12px;
+            letter-spacing: 0.5px;
+            align-self: center;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            text-shadow: none;
+        }
+
+        /* Sweep Progress Bar ( Futuristic Minute Progress ) */
+        .progress-bar-container {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 100px;
+            margin-top: 24px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--theme-primary), var(--theme-secondary));
+            box-shadow: 0 0 10px var(--theme-primary);
+            transition: width 1s linear;
+        }
+
+        /* Calendar / Date Display */
+        .date-section {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 20px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            transition: var(--transition-smooth);
+        }
+
+        .date-section:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .date-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .calendar-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: rgba(var(--theme-primary-rgb), 0.15);
+            color: var(--theme-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+            transition: var(--transition-smooth);
+        }
+
+        .date-text-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .date-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 4px;
+        }
+
+        .date-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        /* Quick Settings & Timezone Display */
+        .meta-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 500px) {
+            .meta-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .meta-card {
+            background: rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .meta-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .meta-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .meta-icon {
+            color: var(--theme-primary);
+            opacity: 0.8;
+            font-size: 14px;
+        }
+
+        .meta-body {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            word-break: break-all;
+        }
+
+        /* Form Toggle & Action Button Custom Style */
+        .interactive-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            color: var(--text-main);
+            padding: 8px 12px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+        }
+
+        .interactive-btn:hover {
+            background: var(--theme-primary);
+            border-color: var(--theme-primary);
+            box-shadow: 0 4px 15px rgba(var(--theme-primary-rgb), 0.3);
+            transform: translateY(-1px);
+        }
+
+        .interactive-btn:active {
+            transform: translateY(1px);
+        }
+
+        /* Footer Copyright & Credits */
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .footer-heart {
+            color: var(--theme-secondary);
+            display: inline-block;
+            animation: heartbeat 1.5s infinite;
+        }
+
+        @keyframes heartbeat {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.15);
+            }
+        }
+
+        /* Keyframe Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Custom Notification Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(20, 20, 35, 0.95);
+            border: 1px solid var(--theme-primary);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(var(--theme-primary-rgb), 0.2);
+            color: var(--text-main);
+            padding: 12px 24px;
+            border-radius: 50px;
+            z-index: 100;
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+            font-weight: 500;
+            font-size: 14px;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Ambient moving radial graphics -->
+    <div class="ambient-glow" id="ambient1"></div>
+    <div class="ambient-glow-secondary" id="ambient2"></div>
+
+    <main>
+        <section class="dashboard-card" id="mainDashboard">
+
+            <!-- Top bar showing identity profile and active customize theme controller -->
+            <header class="top-bar">
+                <div class="profile-container">
+                    <div class="avatar-badge" id="avatarBadge">JW</div>
+                    <div class="profile-info">
+                        <span class="greeting" id="greetingLabel">WELCOME</span>
+                        <h1 id="nameHeader">JUN WEI</h1>
+                    </div>
+                </div>
+
+                <!-- Live Color Customizer -->
+                <div class="theme-selector" title="Change Theme Accent">
+                    <button class="theme-btn btn-violet active" onclick="setTheme('default', this)"></button>
+                    <button class="theme-btn btn-cyberpunk" onclick="setTheme('cyberpunk', this)"></button>
+                    <button class="theme-btn btn-aurora" onclick="setTheme('aurora', this)"></button>
+                    <button class="theme-btn btn-amber" onclick="setTheme('amber', this)"></button>
+                </div>
+            </header>
+
+            <!-- Real-time Digital Clock Area -->
+            <div class="time-section" aria-live="polite">
+                <div class="clock-container" id="clockContainer">
+                    <span class="time-part" id="hours">00</span>
+                    <span class="time-separator">:</span>
+                    <span class="time-part" id="minutes">00</span>
+                    <span class="time-separator">:</span>
+                    <span class="time-part" id="seconds">00</span>
+                    <span class="ampm-badge" id="ampm">AM</span>
+                </div>
+
+                <!-- Sleek progress meter showing minute percentage completion -->
+                <div class="progress-bar-container" title="Elapsed percentage of the current minute">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+
+            <!-- Beautiful Date Display Box -->
+            <article class="date-section">
+                <div class="date-left">
+                    <div class="calendar-icon">
+                        <!-- Custom SVG Calendar Icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                    </div>
+                    <div class="date-text-container">
+                        <span class="date-label">Today's Date</span>
+                        <span class="date-value" id="dateValue">May 29, 2026</span>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Bottom Multi-Card Grid for controls & detailed metadata information -->
+            <footer class="meta-grid">
+                <!-- System Config Options Card -->
+                <div class="meta-card">
+                    <div class="meta-header">
+                        <span class="meta-title">Time Format</span>
+                        <!-- Custom SVG Cog Gear Icon -->
+                        <svg class="meta-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path
+                                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z">
+                            </path>
+                        </svg>
+                    </div>
+                    <div class="meta-body">
+                        <button class="interactive-btn" id="formatToggleBtn" onclick="toggleFormat()">
+                            Use 24-Hour Format
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Live User Timezone Metadata Card -->
+                <div class="meta-card">
+                    <div class="meta-header">
+                        <span class="meta-title">Timezone</span>
+                        <!-- Custom SVG Globe/Location Icon -->
+                        <svg class="meta-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="2" y1="12" x2="22" y2="12"></line>
+                            <path
+                                d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
+                            </path>
+                        </svg>
+                    </div>
+                    <div class="meta-body">
+                        <button class="interactive-btn" id="timezoneBtn" onclick="copyTimezone()"
+                            title="Click to copy exact Timezone name">
+                            <span id="timezoneLabel">UTC</span>
+                        </button>
+                    </div>
+                </div>
+            </footer>
+
+        </section>
+
+        <!-- Under Footer Information -->
+        <footer>
+            <div>Created for <strong style="color: var(--text-main)">JUN WEI</strong></div>
+            <div>Always in motion, crafted with <span class="footer-heart">♥</span></div>
+        </footer>
+    </main>
+
+    <!-- Interactive Toast Notification Container -->
+    <div class="toast" id="toastBox">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        <span id="toastMsg">Copied!</span>
+    </div>
+
+    <!-- Application Script (Logic layer) -->
+    <script>
+        // Internal Application State
+        let is24HourFormat = false;
+
+        // Custom Theme Selector
+        function setTheme(themeName, el) {
+            const root = document.documentElement;
+            // Reset active styles
+            document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+            el.classList.add('active');
+
+            if (themeName === 'default') {
+                root.removeAttribute('data-theme');
+            } else {
+                root.setAttribute('data-theme', themeName);
+            }
+
+            showToast(`Theme changed to ${themeName.charAt(0).toUpperCase() + themeName.slice(1)}`);
+        }
+
+        // Toggle time format 12/24 hour
+        function toggleFormat() {
+            is24HourFormat = !is24HourFormat;
+            const btn = document.getElementById('formatToggleBtn');
+            if (is24HourFormat) {
+                btn.textContent = "Use 12-Hour Format";
+                showToast("Switched to 24-Hour mode");
+            } else {
+                btn.textContent = "Use 24-Hour Format";
+                showToast("Switched to 12-Hour mode");
+            }
+            updateClock();
+        }
+
+        // Copy Timezone label helper
+        function copyTimezone() {
+            const timezoneText = document.getElementById('timezoneLabel').textContent;
+            navigator.clipboard.writeText(timezoneText).then(() => {
+                showToast(`Timezone copied: ${timezoneText}`);
+            }).catch(() => {
+                showToast("Failed to copy timezone");
+            });
+        }
+
+        // Show elegant Custom Toast message
+        let toastTimeout;
+        function showToast(msg) {
+            const toast = document.getElementById('toastBox');
+            const toastMsg = document.getElementById('toastMsg');
+            toastMsg.textContent = msg;
+
+            toast.classList.add('show');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+
+        // Main Clock and Date updater
+        function updateClock() {
+            const now = new Date();
+
+            // Get raw components
+            let hours = now.getHours();
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            let ampmStr = '';
+
+            // Time Of Day Greetings
+            let greetingStr = "Welcome";
+            if (hours >= 5 && hours < 12) {
+                greetingStr = "Good Morning";
+            } else if (hours >= 12 && hours < 17) {
+                greetingStr = "Good Afternoon";
+            } else {
+                greetingStr = "Good Evening";
+            }
+            document.getElementById('greetingLabel').textContent = greetingStr;
+
+            // Handle 12/24 Hour conversion
+            if (!is24HourFormat) {
+                ampmStr = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours ? hours : 12; // '0' should be '12'
+                document.getElementById('ampm').style.display = 'inline-block';
+                document.getElementById('ampm').textContent = ampmStr;
+            } else {
+                document.getElementById('ampm').style.display = 'none';
+            }
+
+            const hoursStr = String(hours).padStart(2, '0');
+
+            // Push update to DOM
+            document.getElementById('hours').textContent = hoursStr;
+            document.getElementById('minutes').textContent = minutes;
+            document.getElementById('seconds').textContent = seconds;
+
+            // Precise smooth progress tracking for the current minute
+            const ms = now.getMilliseconds();
+            const totalSecondsElapsed = now.getSeconds() + (ms / 1000);
+            const progressPercent = (totalSecondsElapsed / 60) * 100;
+            document.getElementById('progressFill').style.width = `${progressPercent}%`;
+
+            // Date rendering options
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const formattedDate = now.toLocaleDateString('en-US', dateOptions);
+            document.getElementById('dateValue').textContent = formattedDate;
+        }
+
+        // Detect current environment configuration on startup
+        function initializeSystem() {
+            // Retrieve User Timezone Info
+            try {
+                const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                document.getElementById('timezoneLabel').textContent = tz || 'UTC';
+            } catch (e) {
+                document.getElementById('timezoneLabel').textContent = 'UTC';
+            }
+
+            // Mouse Move Responsive Glass card tilt effect
+            const card = document.getElementById('mainDashboard');
+            const body = document.body;
+
+            body.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left - (rect.width / 2);
+                const y = e.clientY - rect.top - (rect.height / 2);
+
+                // Keep dynamic rotation smooth and subtle
+                const rotateX = -(y / rect.height) * 8;
+                const rotateY = (x / rect.width) * 8;
+
+                card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+
+                // Move backgrounds subtle with mouse pointer coordinates
+                const ambient1 = document.getElementById('ambient1');
+                const ambient2 = document.getElementById('ambient2');
+
+                ambient1.style.left = `${(e.clientX * 0.05) - 100}px`;
+                ambient1.style.top = `${(e.clientY * 0.05) - 100}px`;
+
+                ambient2.style.right = `${-(e.clientX * 0.03) - 50}px`;
+                ambient2.style.bottom = `${-(e.clientY * 0.03) - 50}px`;
+            });
+
+            body.addEventListener('mouseleave', () => {
+                card.style.transform = 'rotateX(0deg) rotateY(0deg)';
+            });
+
+            // Start dynamic loops
+            updateClock();
+            setInterval(updateClock, 100); // 100ms interval for precise clock ticking and progress updates
+        }
+
+        // Trigger bootstrap configuration
+        window.addEventListener('DOMContentLoaded', initializeSystem);
+    </script>
+</body>
+
+</html>
